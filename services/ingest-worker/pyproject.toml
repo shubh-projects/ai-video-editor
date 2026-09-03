@@ -20,9 +20,9 @@ dependencies = [
     "demucs==4.0.1",
     "faster-whisper>=1.0.0",
     "whisperx>=3.1.1",
-    "torch==2.8.0+cu126",
-    "torchvision==0.23.0+cu126",
-    "torchaudio==2.8.0+cu126",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "torchaudio>=2.0.0",
 ]
 
 [project.optional-dependencies]

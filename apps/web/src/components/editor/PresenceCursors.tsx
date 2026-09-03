@@ -94,7 +94,7 @@ export function PresenceCursors({ projectId, userName }: PresenceCursorsProps) {
     const start = () => {
       if (interval) return;
       tick();
-      interval = setInterval(tick, 1000);
+      interval = setInterval(tick, 15000);
     };
     const stop = () => {
       if (interval) {

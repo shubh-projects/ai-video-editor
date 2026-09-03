@@ -2,9 +2,9 @@
 """Populate Wave 5X/6X caches for the batch-2 fixture clips.
 
 Writes:
-  - E:\\ai-video-editor-storage\\clip_semantic\\<clip_id>.npz  (DINO-v2)
-  - E:\\ai-video-editor-storage\\siglip2_clip\\<clip_id>.npy   (SigLIP-2)
-  - E:\\ai-video-editor-storage\\clip_emotion\\<clip_id>.json (fused emotion)
+  - E:\ai-video-editor-storage\\clip_semantic\\<clip_id>.npz  (DINO-v2)
+  - E:\ai-video-editor-storage\\siglip2_clip\\<clip_id>.npy   (SigLIP-2)
+  - E:\ai-video-editor-storage\\clip_emotion\\<clip_id>.json (fused emotion)
   - <clip>.emotion.json sidecar (kept for the existing golden check)
 """
 

@@ -2,7 +2,7 @@
 name = "ai-video-editor-tests"
 version = "0.1.0"
 description = "Comprehensive test suite for AI Video Editor backend"
-requires-python = ">=3.11"
+requires-python = ">=3.11, <3.13"
 dependencies = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -100,9 +100,9 @@ url = "https://download.pytorch.org/whl/cu124"
 explicit = true
 
 [tool.uv.sources]
-torch = { index = "torch-cu124" }
-torchvision = { index = "torch-cu124" }
-torchaudio = { index = "torch-cu124" }
+torch = { index = "pytorch-gpu" }
+torchaudio = { index = "pytorch-gpu" }
+torchvision = { index = "pytorch-gpu" }
 shared-py = { workspace = true }
 ingest-worker = { workspace = true }
 reason-worker = { workspace = true }
@@ -116,3 +116,8 @@ segment-worker = { workspace = true }
 dev = [
     "ruff>=0.15.15",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-gpu"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true

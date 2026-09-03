@@ -2,8 +2,11 @@
 // Licensed under the Elastic License 2.0 — see LICENSE in the repo root.
 "use client";
 
-import { useEffect, useRef } from "react";
-import ReactPlayer from "react-player";
+import dynamic from "next/dynamic";
+import { useEffect, useMemo, useRef } from "react";
+
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
+
 import type { Asset, CanvasOverlay, PreviewEffects, Subtitle } from "@/types/api";
 import { OverlayCanvas } from "../canvas/OverlayCanvas";
 
@@ -17,6 +20,7 @@ interface PreviewPanelProps {
   showSubtitles?: boolean;
   aspectRatio?: string;
   effects?: PreviewEffects;
+  selectedClipId?: string | null;
 }
 
 const RATIO_MAP: Record<string, string> = {
@@ -36,9 +40,19 @@ export function PreviewPanel({
   showSubtitles = true,
   aspectRatio = "9:16",
   effects,
+  selectedClipId,
 }: PreviewPanelProps) {
-  const playerRef = useRef<ReactPlayer>(null);
-  const referenceAsset = assets.find((a) => a.type === "reference_video");
+  const playerRef = useRef<any>(null);
+
+  // Prioritize the selected timeline clip, fallback to reference video
+  const activeAsset = useMemo(() => {
+    if (selectedClipId) {
+      const clip = assets.find((a) => a.id === selectedClipId);
+      if (clip) return clip;
+    }
+    return assets.find((a) => a.type === "reference_video");
+  }, [assets, selectedClipId]);
+
   const seekingRef = useRef(false);
 
   useEffect(() => {
@@ -67,11 +81,11 @@ export function PreviewPanel({
 
   return (
     <div className="flex-1 bg-black relative flex items-center justify-center overflow-hidden">
-      {referenceAsset?.storageUrl ? (
+      {activeAsset?.storageUrl ? (
         <div className="relative h-full max-h-full" style={{ aspectRatio: ratioStyle }}>
           <ReactPlayer
             ref={playerRef}
-            url={referenceAsset.storageUrl}
+            url={activeAsset.storageUrl}
             playing={isPlaying}
             width="100%"
             height="100%"

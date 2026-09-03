@@ -3,6 +3,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { motion } from "framer-motion";
 import {
   ChevronLeft,
   Command as CommandIcon,
@@ -29,6 +30,12 @@ import {
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PresenceCursors } from "./PresenceCursors";
 import { ProgressBar } from "./ProgressBar";
 import { InspectorPanel } from "./panels/InspectorPanel";
@@ -129,11 +136,10 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
 
   const aspectRatio = state.cutList?.globals?.aspectRatio || "9:16";
   const setAspectRatio = (ratio: string) => {
-    if (!state.cutList) return;
     actions.setCutList({
-      ...state.cutList,
-      globals: { ...state.cutList.globals, aspectRatio: ratio },
-    });
+      ...(state.cutList || { slots: [], overlays: [], audioTracks: [] }),
+      globals: { ...(state.cutList?.globals || {}), aspectRatio: ratio },
+    } as CutList);
   };
   useEffect(() => {
     actions.setAssets(assets);
@@ -291,12 +297,13 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
     state.selectedSlotIndex !== null && state.cutList ? state.cutList.slots[state.selectedSlotIndex] : null;
 
   return (
-    <div className="h-screen bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden relative">
+    <div className="h-screen bg-zinc-950 text-zinc-100 flex flex-col overflow-hidden relative bg-glass-noise">
       <PresenceCursors projectId={project.id} userName={user?.firstName || "User"} />
+
       {/* Top Bar */}
       <div
         data-testid="editor-topbar"
-        className="h-14 border-b border-zinc-800 flex items-center px-4 gap-4 shrink-0 bg-zinc-950/80 backdrop-blur-sm"
+        className="h-14 border-b border-zinc-800 flex items-center px-4 gap-4 shrink-0 bg-zinc-950/80 backdrop-blur-2xl shadow-glass"
       >
         <button
           onClick={() => router.push("/dashboard")}
@@ -318,21 +325,21 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
         <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto [&::-webkit-scrollbar]:hidden max-w-[55vw] sm:max-w-none">
           <button
             onClick={timeline.togglePlay}
-            className="p-2 hover:bg-zinc-800 rounded-lg transition"
+            className="p-2 hover:bg-zinc-800 rounded-lg transition outline-none"
             aria-label={timeline.isPlaying ? "Pause" : "Play"}
           >
             {timeline.isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
           </button>
           <button
             onClick={() => timeline.seek(0)}
-            className="p-2 hover:bg-zinc-800 rounded-lg transition"
+            className="p-2 hover:bg-zinc-800 rounded-lg transition outline-none"
             aria-label="Reset to start"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
           <button
             onClick={() => setPromptOpen((p) => !p)}
-            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition whitespace-nowrap"
+            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition whitespace-nowrap outline-none"
           >
             <span className="hidden sm:inline">AI Prompt</span>
             <Wand2 className="w-4 h-4 sm:hidden" />
@@ -371,7 +378,7 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
               styleAnalysis.isPending ||
               !!activeJobId
             }
-            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 whitespace-nowrap"
+            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 whitespace-nowrap outline-none"
             data-testid="generate-from-reference"
           >
             <span className="hidden sm:inline">
@@ -410,55 +417,63 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
               }
             }}
             disabled={transcribing}
-            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
+            className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap outline-none"
             title="Generate subtitles from audio"
           >
             <Subtitles className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{transcribing ? "..." : "Subtitles"}</span>
           </button>
 
-          {/* Aspect ratio dropdown */}
-          <div className="relative group">
-            <button className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition flex items-center gap-1.5 whitespace-nowrap">
-              <Smartphone className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{aspectRatio}</span>
-            </button>
-            <div className="absolute right-0 top-full mt-1 hidden group-hover:flex flex-col bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden z-50 min-w-[100px]">
+          {/* Aspect ratio dropdown - Radix Implementation */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition flex items-center gap-1.5 whitespace-nowrap outline-none">
+                <Smartphone className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{aspectRatio}</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-zinc-900 border-zinc-800 text-zinc-300 min-w-[100px] z-50"
+            >
               {["9:16", "4:5", "1:1", "16:9"].map((ratio) => (
-                <button
+                <DropdownMenuItem
                   key={ratio}
                   onClick={() => setAspectRatio(ratio)}
-                  className={`px-3 py-2 text-xs text-left hover:bg-zinc-800 transition ${
-                    aspectRatio === ratio ? "text-cyan-400 bg-zinc-800/50" : "text-zinc-300"
-                  }`}
+                  className={`text-xs cursor-pointer focus:bg-zinc-800 focus:text-cyan-400 ${aspectRatio === ratio ? "text-cyan-400 bg-zinc-800/50" : ""}`}
                 >
                   {ratio}
-                </button>
+                </DropdownMenuItem>
               ))}
-            </div>
-          </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
-          {/* Template save/load */}
-          <div className="relative group">
-            <button className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition flex items-center gap-1.5 whitespace-nowrap">
-              <Save className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Template</span>
-            </button>
-            <div className="absolute right-0 top-full mt-1 hidden group-hover:flex flex-col bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl overflow-hidden z-50 min-w-[140px]">
-              <button
+          {/* Template save/load - Radix Implementation */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="px-2 sm:px-3 py-1.5 text-sm bg-zinc-800 hover:bg-zinc-700 rounded-lg transition flex items-center gap-1.5 whitespace-nowrap outline-none">
+                <Save className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Template</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-zinc-900 border-zinc-800 text-zinc-300 min-w-[140px] z-50"
+            >
+              <DropdownMenuItem
                 onClick={() => state.cutList && setSaveTemplateOpen(true)}
-                className="px-3 py-2 text-xs text-left hover:bg-zinc-800 transition text-zinc-300 flex items-center gap-1.5"
+                className="text-xs cursor-pointer gap-2 focus:bg-zinc-800"
               >
                 <Save className="w-3 h-3" /> Save as Template
-              </button>
-              <button
+              </DropdownMenuItem>
+              <DropdownMenuItem
                 onClick={() => setLoadTemplateOpen(true)}
-                className="px-3 py-2 text-xs text-left hover:bg-zinc-800 transition text-zinc-300 flex items-center gap-1.5"
+                className="text-xs cursor-pointer gap-2 focus:bg-zinc-800"
               >
                 <FolderOpen className="w-3 h-3" /> Load Template
-              </button>
-            </div>
-          </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <RenderButton projectId={project.id} assets={state.assets} onJobStart={setActiveJobId} />
           {renderStatus.latestRender && !renderStatus.activeRender && (
@@ -482,11 +497,14 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
 
       {/* Main Workspace */}
       <div className="flex-1 flex overflow-hidden">
-        <MediaPanel projectId={project.id} assets={state.assets} onAssetsChange={actions.setAssets} />
+        <motion.div layout className="hidden md:flex shrink-0">
+          <MediaPanel projectId={project.id} assets={state.assets} onAssetsChange={actions.setAssets} />
+        </motion.div>
 
-        <div className="flex-1 flex flex-col min-w-0">
+        <motion.div layout className="flex-1 flex flex-col min-w-0">
           <PreviewPanel
             assets={state.assets}
+            selectedClipId={selectedSlot?.selectedClipId || selectedSlot?.selectedClipId}
             currentTime={timeline.currentTime}
             isPlaying={timeline.isPlaying}
             onTimeUpdate={timeline.seek}
@@ -514,26 +532,32 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
             selectedSubtitleId={selectedSubtitleId}
             onSelectSubtitle={setSelectedSubtitleId}
           />
-        </div>
+        </motion.div>
 
-        <InspectorPanel
-          selectedSlot={selectedSlot}
-          selectedSlotIndex={state.selectedSlotIndex}
-          selectedOverlayId={state.selectedOverlayId}
-          overlays={state.cutList?.overlays || []}
-          cutList={state.cutList}
-          onUpdateSlot={actions.updateSlot}
-          onUpdateOverlay={actions.updateOverlay}
-          onSelectOverlay={actions.selectOverlay}
-          onUpdateEffects={(effects) => {
-            if (!state.cutList) return;
-            actions.setCutList({
-              ...state.cutList,
-              globals: { ...state.cutList.globals, effects },
-            });
-          }}
-        />
-        <SegmentPanel projectId={project.id} assets={state.assets} />
+        <motion.div layout className="hidden md:flex shrink-0">
+          <InspectorPanel
+            selectedSlot={selectedSlot}
+            selectedSlotIndex={state.selectedSlotIndex}
+            selectedOverlayId={state.selectedOverlayId}
+            overlays={state.cutList?.overlays || []}
+            cutList={state.cutList}
+            onUpdateSlot={actions.updateSlot}
+            onUpdateOverlay={actions.updateOverlay}
+            onSelectOverlay={actions.selectOverlay}
+            onDeleteSlot={(index) => actions.removeSlot(index, false)}
+            onUpdateEffects={(effects) => {
+              if (!state.cutList) return;
+              actions.setCutList({
+                ...state.cutList,
+                globals: { ...state.cutList.globals, effects },
+              });
+            }}
+          />
+        </motion.div>
+
+        <motion.div layout className="hidden md:flex shrink-0">
+          <SegmentPanel projectId={project.id} assets={state.assets} />
+        </motion.div>
       </div>
 
       {/* Mobile bottom toolbar */}
@@ -607,6 +631,7 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
                   onUpdateSlot={actions.updateSlot}
                   onUpdateOverlay={actions.updateOverlay}
                   onSelectOverlay={actions.selectOverlay}
+                  onDeleteSlot={(index) => actions.removeSlot(index, false)}
                   onUpdateEffects={(effects) => {
                     if (!state.cutList) return;
                     actions.setCutList({
@@ -650,7 +675,13 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
         </Sheet>
       ) : (
         promptOpen && (
-          <div className="absolute bottom-[220px] right-[300px] w-96 z-50">
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-[220px] right-[300px] w-96 z-50 shadow-glass"
+          >
             <PromptPanel
               projectId={project.id}
               cutList={state.cutList}
@@ -658,7 +689,7 @@ export function EditorLayout({ project, assets }: EditorLayoutProps) {
               onUndo={actions.undo}
               onClose={() => setPromptOpen(false)}
             />
-          </div>
+          </motion.div>
         )
       )}
 

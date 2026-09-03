@@ -1,11 +1,10 @@
 # Copyright (c) 2025 Devayan Dewri. All rights reserved.
-# Licensed under the Elastic License 2.0 - see LICENSE in the repo root.
+# Licensed under the Elastic License 2.0 — see LICENSE in the repo root.
 # Commercial SaaS use is prohibited without written permission.
 """Pluggable object storage backend.
 
 Supports a local filesystem backend (default) and an R2/S3-compatible backend.
-The local backend is rooted at ``E:\\ai-video-editor-storage`` by default and
-uses atomic writes (temp file + rename) to avoid partial reads.
+The local backend uses atomic writes (temp file + rename) to avoid partial reads.
 
 Legacy module-level helpers (:func:`download_asset`, :func:`upload_file`, etc.)
 remain as thin wrappers around :func:`get_storage` for backward compatibility.
@@ -24,7 +23,8 @@ from botocore.config import Config
 from botocore.exceptions import ClientError
 
 
-_DEFAULT_LOCAL_ROOT = r"E:\ai-video-editor-storage"
+# Fallback to user home directory instead of a hardcoded E:\ drive
+_DEFAULT_LOCAL_ROOT = os.path.join(os.path.expanduser("~"), "ai-video-editor-storage")
 
 
 @runtime_checkable
@@ -82,7 +82,6 @@ class LocalStorage:
 
     def _safe_path(self, key: str) -> str:
         """Resolve ``key`` under the storage root, rejecting traversal."""
-        # Normalize forward/backward slashes and strip leading/trailing slashes.
         if key.startswith("/") or key.startswith("\\"):
             raise ValueError(f"Storage key must be relative: {key}")
         normalized = key.replace("\\", "/").strip("/")
@@ -139,18 +138,12 @@ class LocalStorage:
         return os.path.exists(self._safe_path(key))
 
     def url(self, key: str, expires_in: int = 3600) -> str:
-        # ``expires_in`` is ignored for local files. Return a relative URL that
-        # the API serves via the ``/storage/{key}`` static route.
         normalized = key.replace("\\", "/").lstrip("/")
         return f"/storage/{normalized}"
 
 
 class R2Storage:
-    """R2/S3-compatible storage backend.
-
-    Currently delegates to the legacy boto3 helpers. In the future this can be
-    inlined and extended with streaming, multipart, and ACL support.
-    """
+    """R2/S3-compatible storage backend."""
 
     def get(self, key: str, local_path: str) -> str:
         return _r2_download(key, local_path)
@@ -163,7 +156,6 @@ class R2Storage:
     ) -> str:
         if isinstance(source, (str, Path)):
             return _r2_upload(str(source), key, content_type=content_type)
-        # Bytes path: write to a temp file first, then upload.
         ext = os.path.splitext(key)[1] or ".tmp"
         with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as tmp:
             tmp.write(source)
@@ -190,7 +182,7 @@ class R2Storage:
         return _r2_presigned_url(key, expires_in=expires_in)
 
 
-# ── Legacy boto3 helpers (kept private; used by R2Storage) ───────────────────
+# ── Legacy boto3 helpers ───────────────────────────────────────────────────
 
 
 def _get_s3_client():
@@ -284,9 +276,15 @@ def _r2_presigned_url(storage_key: str, expires_in: int = 3600) -> str:
 def get_storage() -> StorageBackend:
     """Return the configured storage backend.
 
-    Reads ``STORAGE_BACKEND`` (``local`` or ``r2``). Defaults to ``local``.
+    Auto-detects R2/S3 storage if R2_ENDPOINT is configured, otherwise defaults to local.
     """
-    backend = os.environ.get("STORAGE_BACKEND", "local").lower()
+    backend = os.environ.get("STORAGE_BACKEND", "").lower()
+    if not backend:
+        if os.environ.get("R2_ENDPOINT"):
+            backend = "r2"
+        else:
+            backend = "local"
+
     if backend == "r2":
         return R2Storage()
     return LocalStorage()

@@ -127,7 +127,7 @@ export function ProjectCard({ project }: { project: Project }) {
             </h3>
             <div className="flex items-center gap-2 mt-2 text-xs text-glass-faint">
               <Clock className="w-3.5 h-3.5" />
-              <span>Updated {new Date(project.updatedAt).toLocaleDateString()}</span>
+              <span suppressHydrationWarning>Updated {new Date(project.updatedAt).toLocaleDateString()}</span>
             </div>
           </CardContent>
         </Card>

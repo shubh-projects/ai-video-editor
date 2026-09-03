@@ -3,9 +3,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Trash2 } from "lucide-react";
 import { memo, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,6 +50,7 @@ interface InspectorPanelProps {
   onUpdateOverlay: (id: string, overlay: Partial<CanvasOverlay>) => void;
   onSelectOverlay: (id: string | null) => void;
   onUpdateEffects?: (effects: PreviewEffects) => void;
+  onDeleteSlot?: (index: number) => void;
 }
 
 interface EffectSliderProps {
@@ -95,6 +98,7 @@ function InspectorPanelInner({
   onUpdateSlot,
   onUpdateOverlay,
   onUpdateEffects,
+  onDeleteSlot,
 }: InspectorPanelProps) {
   const selectedOverlay = overlays.find((o) => o.id === selectedOverlayId);
   const effects: PreviewEffects = useMemo(
@@ -287,7 +291,20 @@ function InspectorPanelInner({
         {selectedSlot && selectedSlotIndex !== null && (
           <Form {...slotForm}>
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">Slot {selectedSlotIndex}</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium">Slot {selectedSlotIndex}</h3>
+                {onDeleteSlot && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDeleteSlot(selectedSlotIndex)}
+                    className="h-7 w-7 p-0 text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                    title="Delete Slot"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
               <FormField
                 control={slotForm.control}
                 name="startS"

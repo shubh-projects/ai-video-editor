@@ -142,6 +142,7 @@ def _run_migrations() -> bool:
     result = subprocess.run(
         ["pnpm", "--filter", "@ai-video-editor/api", "db:migrate"],
         cwd=ROOT,
+        shell=True,
     )
     if result.returncode != 0:
         print(_red("Migrations failed."))

@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import { useApi } from "@/lib/api/client";
 import type { Asset } from "@/types/api";
 
-const POLL_INTERVAL_MS = 2000;
+const POLL_INTERVAL_MS = 15000; // Updated from 2000 to 15000
 
 function isPending(asset: Asset): boolean {
   // Treat durationSec == null or 0 as still being ingested.

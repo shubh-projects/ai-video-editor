@@ -54,9 +54,11 @@ export function useRenderStatus(projectId: string): RenderStatus {
     };
 
     doPoll();
+
+    // Increased interval to 15 seconds to prevent rate limiting
     intervalRef.current = setInterval(() => {
       if (mounted) poll();
-    }, 3000);
+    }, 15000);
 
     return () => {
       mounted = false;
