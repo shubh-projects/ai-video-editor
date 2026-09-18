@@ -148,4 +148,4 @@ def transcribe_with_whisperx(
 
 
 def _default_cache_dir() -> Path:
-    return Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "models" / "whisperx"
+    return Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")) / "models" / "whisperx"

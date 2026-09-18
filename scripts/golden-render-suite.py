@@ -32,7 +32,7 @@ RENDER_LOG = OUTPUT_DIR / "render.log"
 OUTPUT_VIDEO = OUTPUT_DIR / "output.mp4"
 CUTLIST_JSON = OUTPUT_DIR / "cutlist.json"
 SONG_ANALYSIS_JSON = OUTPUT_DIR / "song_analysis.json"
-STORAGE_ROOT = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage"))
+STORAGE_ROOT = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage"))
 
 WORD_BANKS = {
     "triumphant": [

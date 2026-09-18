@@ -265,4 +265,8 @@ def extract_lut_from_reference(
     if colour is None:
         return None, StyleAnalysis(lut_extracted=False)
 
-    return _extract_lut_reinhard(frames, output_dir, strength, asset_id=asset_id)
+    try:
+        return _extract_lut_reinhard(frames, output_dir, strength, asset_id=asset_id)
+    except Exception as e:
+        logger.warning("Reinhard LUT extraction skipped due to memory limit", error=str(e))
+        return None, StyleAnalysis(lut_extracted=False)

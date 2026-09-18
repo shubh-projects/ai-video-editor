@@ -2,9 +2,9 @@
 """Populate Wave 5X/6X caches for the batch-2 fixture clips.
 
 Writes:
-  - E:\ai-video-editor-storage\\clip_semantic\\<clip_id>.npz  (DINO-v2)
-  - E:\ai-video-editor-storage\\siglip2_clip\\<clip_id>.npy   (SigLIP-2)
-  - E:\ai-video-editor-storage\\clip_emotion\\<clip_id>.json (fused emotion)
+  - C:\Users\Shubh\Documents\ai-video-editor-storage\\clip_semantic\\<clip_id>.npz  (DINO-v2)
+  - C:\Users\Shubh\Documents\ai-video-editor-storage\\siglip2_clip\\<clip_id>.npy   (SigLIP-2)
+  - C:\Users\Shubh\Documents\ai-video-editor-storage\\clip_emotion\\<clip_id>.json (fused emotion)
   - <clip>.emotion.json sidecar (kept for the existing golden check)
 """
 
@@ -27,7 +27,7 @@ from style_worker.siglip2 import embed_video_frames
 
 BATCH_DIR = REPO_ROOT / "test files" / "batch 2"
 CLIPS_DIR = BATCH_DIR / "clips"
-STORAGE_ROOT = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage"))
+STORAGE_ROOT = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage"))
 
 
 def main() -> None:

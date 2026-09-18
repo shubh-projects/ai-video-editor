@@ -61,7 +61,7 @@ def _energy_at_time(time_s: float, energy_curve: List[float], content_end: float
 
 def _load_lyrics_for_song_hash(song_hash: str) -> Optional[List[WordTiming]]:
     """Load cached Whisper word timings for a song hash, if available."""
-    storage_root = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage"))
+    storage_root = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage"))
     cache_file = storage_root / "lyrics" / song_hash / "lyrics.json"
     if not cache_file.exists():
         return None

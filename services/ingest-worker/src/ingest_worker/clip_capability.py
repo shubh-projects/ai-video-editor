@@ -40,7 +40,7 @@ logger = StructuredLogger("ingest_worker.clip_capability")
 
 
 def _default_cache_dir() -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     return Path(root) / "clip_capability"
 
 

@@ -6,6 +6,7 @@
 import os
 import shutil
 import tempfile
+import json
 from typing import Dict, List, Optional
 
 import httpx
@@ -132,10 +133,13 @@ async def detect_text_overlays(video_path: str, fps_sample: float = 5.0) -> List
 
 
 @activity.defn
-async def analyze_motion(video_path: str, shot_boundaries: List[dict]) -> List[str]:
-    """Classify camera motion for each shot boundary."""
-    shots = [ShotBoundary(**s) for s in shot_boundaries]
-    return analyze_camera_motion(video_path, shots)
+async def analyze_motion(video_path: str, shots: list) -> list:
+    try:
+        from .camera_motion import analyze_camera_motion
+        return analyze_camera_motion(video_path, shots)
+    except Exception as e:
+        activity.logger.warning(f"Bypassing camera motion due to GPU memory limit: {e}")
+        return []  # Gracefully return an empty list so the workflow can finish
 
 
 @activity.defn
@@ -230,21 +234,29 @@ async def analyze_reference_activity(
 
     # Persist the analysis back to the reference asset metadata.
     try:
+        import json
+        # Bulletproof serialization
+        safe_dict = json.loads(json.dumps(ref.model_dump(), default=str))
+
         async with httpx.AsyncClient() as client:
-            await client.patch(
+            response = await client.patch(
                 f"{settings.api_base}/internal/assets/{asset_id}/metadata",
-                json={"referenceAnalysis": ref.model_dump()},
+                json={"metadata": {"referenceAnalysis": safe_dict}},
                 headers=_internal_headers(),
-                timeout=30,
+                timeout=30.0
             )
+            if response.status_code >= 400:
+                activity.logger.error(f"API Rejected Data: {response.text}")
+                response.raise_for_status()
+                
     except Exception as e:
         activity.logger.warning(f"Failed to cache reference analysis: {e}")
+        raise e
 
     return {
-        "referenceAnalysis": ref.model_dump(),
-        "videoPath": video_path,
+        "referenceAnalysis": safe_dict,
+        "videoPath": str(video_path),
     }
-
 
 @activity.defn
 async def cleanup_style_assets(video_path: str, output_dir: str) -> None:

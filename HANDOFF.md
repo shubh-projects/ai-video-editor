@@ -162,11 +162,11 @@ The Golden Render Suite will catch this; if it doesn't catch this, ADD the check
 ### What changed
 
 - **O.18 Local storage abstraction**
-  - `services/shared-py/src/shared_py/storage.py` — `StorageBackend` protocol, `LocalStorage` rooted at `E:\ai-video-editor-storage`, `R2Storage` stub, `get_storage()` factory.
+  - `services/shared-py/src/shared_py/storage.py` — `StorageBackend` protocol, `LocalStorage` rooted at `C:\Users\Shubh\Documents\ai-video-editor-storage`, `R2Storage` stub, `get_storage()` factory.
   - Migrated LUT and genome writes in `style-worker` to use storage abstraction.
   - Added `GET /storage/*` static route in `apps/api/src/app.ts`.
 - **O.17 Local LLM client (Gemma 4 via Ollama)**
-  - `services/shared-py/src/shared_py/llm_client.py` — Ollama backend with Anthropic fallback, per-task routing, disk cache at `E:\ai-video-editor-storage\llm_cache`.
+  - `services/shared-py/src/shared_py/llm_client.py` — Ollama backend with Anthropic fallback, per-task routing, disk cache at `C:\Users\Shubh\Documents\ai-video-editor-storage\llm_cache`.
   - Migrated `iconic_quotes.py` to use `LLMClient`.
   - Created `services/reason-worker/src/reason_worker/edit_intent.py` for object-edit intent classification + ethics gates.
 - **O.10 Anti-decoration gate / feature runtime report**

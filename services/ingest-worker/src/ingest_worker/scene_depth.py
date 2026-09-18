@@ -21,7 +21,7 @@ _DEPTH_MODEL: Optional[Tuple[Any, Any]] = None
 
 
 def _cache_dir() -> Path:
-    return Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "scene_depth"
+    return Path(os.environ.get("STORAGE_ROOT", r"C:/Users/Shubh/Documents/ai-video-editor-storage/scene_depth")) / "scene_depth"
 
 
 def _analysis_cache_path(asset_id: str) -> Path:

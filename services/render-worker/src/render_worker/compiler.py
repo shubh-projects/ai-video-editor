@@ -48,7 +48,7 @@ _slot_window_fallback_lock = threading.Lock()
 # manually by the operator. The compiler prefers these over system fonts so text
 # renders consistently across machines.
 _BUNDLED_FONT_DIR = os.environ.get(
-    "AVE_FONT_DIR", "E:/ai-video-editor-storage/fonts/display"
+    "AVE_FONT_DIR", "C:/Users/Shubh/Documents/ai-video-editor-storage/fonts/display"
 )
 
 # Canonical display font filenames (all SIL Open Font License or freely usable).

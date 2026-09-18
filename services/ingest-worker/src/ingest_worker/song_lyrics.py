@@ -43,16 +43,13 @@ def _song_hash(audio_path: str) -> str:
 
 
 def _default_cache_dir() -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     return Path(root) / "lyrics"
 
 
 def _whisper_device() -> str:
-    try:
-        import torch
-        return "cuda" if torch.cuda.is_available() else "cpu"
-    except Exception:
-        return "cpu"
+    # Forced to CPU to avoid Windows cuDNN DLL crashes
+    return "cpu"
 
 
 def _load_whisper_model(model_size: str = "large-v3") -> Optional[object]:
@@ -66,7 +63,7 @@ def _load_whisper_model(model_size: str = "large-v3") -> Optional[object]:
         return None
     try:
         device = _whisper_device()
-        compute_type = "float16" if device == "cuda" else "int8"
+        compute_type = "int8"
         _whisper_model = WhisperModel(model_size, device=device, compute_type=compute_type)
         logger.info("whisper model loaded", model=model_size, device=device, compute_type=compute_type)
     except Exception as e:

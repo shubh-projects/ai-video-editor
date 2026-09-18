@@ -54,7 +54,7 @@ class AnalyzeStyleWorkflow:
     @workflow.run
     async def run(self, input: AnalyzeStyleInput) -> AnalyzeStyleOutput:
         retry = RetryPolicy(maximum_attempts=3)
-        timeout = timedelta(seconds=300)
+        timeout = timedelta(minutes=15)
 
         # Analyze the reference once and cache the result. This is the single
         # source of truth for LUT, genome, shot boundaries, quality warnings.
@@ -163,7 +163,7 @@ class AnalyzeGenomeWorkflow:
     @workflow.run
     async def run(self, input: AnalyzeGenomeInput) -> dict:
         retry = RetryPolicy(maximum_attempts=3)
-        timeout = timedelta(seconds=300)
+        timeout = timedelta(minutes=15)
 
         ref_wrapper = await workflow.execute_activity(
             "analyze_reference_activity",

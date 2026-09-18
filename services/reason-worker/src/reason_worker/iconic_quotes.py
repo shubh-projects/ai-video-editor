@@ -367,7 +367,7 @@ def _isolation_score(seg: TranscriptSegment, all_segments: List[TranscriptSegmen
 def _llm_client() -> LLMClient:
     """Return the unified LLM client configured for iconic quote scoring."""
     return LLMClient(
-        local_model="gemma4:12b",
+        local_model="llama3.1",
         cloud_model="claude-3-5-haiku-20241022",
     )
 

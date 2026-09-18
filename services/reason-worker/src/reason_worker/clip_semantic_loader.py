@@ -10,7 +10,7 @@ from typing import Dict, Optional
 
 import numpy as np
 
-STORAGE_ROOT = Path(r"E:\ai-video-editor-storage")
+STORAGE_ROOT = Path(r"C:\Users\Shubh\Documents\ai-video-editor-storage")
 
 
 @dataclass(frozen=True)

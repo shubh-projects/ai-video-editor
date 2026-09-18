@@ -291,7 +291,7 @@ def _classify_intents_with_llm(
     )
 
     try:
-        client = llm_client or LLMClient(local_model="gemma4:12b")
+        client = llm_client or LLMClient(local_model="llama3.1")
         response = client.complete(
             task=LLMTask.REFERENCE_INTENT,
             prompt=f"SYSTEM: {system}\nUSER: {user}",
@@ -338,15 +338,17 @@ def extract_reference_intent_profile(
 ) -> ReferenceIntentProfile:
     """Extract an intent pattern profile from a reference video.
 
-    Caches results in ``cache_root`` (defaults to ``E:\ai-video-editor-storage\reference_intent``).
+    Caches results in ``cache_root`` (defaults to the local user directory).
     """
     if cache_root is None:
-        cache_root = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "reference_intent"
+        # Dynamically route to C:\Users\Shubh\ai-video-editor-storage instead of E:\
+        default_root = Path(os.path.expanduser("~")) / "ai-video-editor-storage"
+        cache_root = Path(os.environ.get("STORAGE_ROOT", default_root)) / "reference_intent"
 
     cached = _load_cached_profile(video_path, cache_root)
     if cached is not None:
         return cached
-
+    
     if shot_boundaries:
         shots = [(s.start_s, s.end_s) for s in shot_boundaries]
     else:

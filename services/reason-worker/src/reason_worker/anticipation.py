@@ -23,7 +23,7 @@ _CURVE_MEMO: dict[str, np.ndarray] = {}
 
 
 def _motion_curve_cache_file(clip_path: str, fps_sample: float) -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     digest = hashlib.sha1(f"{os.path.abspath(clip_path)}|{fps_sample:.3f}".encode("utf-8")).hexdigest()
     return Path(root) / "motion_curves" / f"{digest}.npy"
 

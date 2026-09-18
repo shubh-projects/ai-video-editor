@@ -245,7 +245,7 @@ async def compute_clip_semantic_activity(asset_id: str, storage_key: str) -> dic
     local_path = download_asset(storage_key, _local_clip_path(asset_id, storage_key))
     try:
         embedding = embed_clip(local_path, clip_id=asset_id)
-        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "clip_semantic"
+        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")) / "clip_semantic"
         cache_path = str(cache_dir / f"{asset_id}.npz")
         metadata = {
             "dinoEmbeddingPath": cache_path,
@@ -266,7 +266,7 @@ async def analyze_clip_emotion_activity(asset_id: str, storage_key: str) -> dict
     """Download a clip asset, compute a fused emotion profile, and persist metadata."""
     local_path = download_asset(storage_key, _local_clip_path(asset_id, storage_key))
     try:
-        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "clip_emotion"
+        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")) / "clip_emotion"
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_path = str(cache_dir / f"{asset_id}.json")
         profile = compute_clip_emotion_profile(local_path, cache_path=cache_path)
@@ -286,7 +286,7 @@ async def compute_siglip2_embedding_activity(asset_id: str, storage_key: str) ->
     local_path = download_asset(storage_key, _local_clip_path(asset_id, storage_key))
     try:
         siglip2_embed_video_frames(local_path, clip_id=asset_id)
-        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "siglip2_clip"
+        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")) / "siglip2_clip"
         cache_path = str(cache_dir / f"{asset_id}.npy")
         metadata = {"siglip2EmbeddingPath": cache_path}
         await _patch_asset_metadata(asset_id, metadata)
@@ -303,7 +303,7 @@ async def compute_clip_capability_activity(asset_id: str, storage_key: str) -> d
     """Download a clip asset, compute its intent capability map, and persist metadata."""
     local_path = download_asset(storage_key, _local_clip_path(asset_id, storage_key))
     try:
-        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")) / "clip_capability"
+        cache_dir = Path(os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")) / "clip_capability"
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_path = str(cache_dir / f"{asset_id}.json")
         profile = compute_clip_capability_profile(local_path, clip_id=asset_id, cache_path=cache_path)

@@ -16,9 +16,9 @@ Committed: `3d996d4` (T.9 Wave 2: Whisper lyric transcription, Demucs stem separ
 
 ### Caches produced
 
-- Lyrics: `E:\ai-video-editor-storage\lyrics\591352f472ea0e1388e0d794abaa6d32\lyrics.json`
+- Lyrics: `C:\Users\Shubh\Documents\ai-video-editor-storage\lyrics\591352f472ea0e1388e0d794abaa6d32\lyrics.json`
   - `lyric_word_count`: 196
-- Stems: `E:\ai-video-editor-storage\stems\591352f472ea0e1388e0d794abaa6d32\`
+- Stems: `C:\Users\Shubh\Documents\ai-video-editor-storage\stems\591352f472ea0e1388e0d794abaa6d32\`
   - 4/4 stems present, ~40 MB each
 
 ### Unit tests
@@ -60,7 +60,7 @@ Run command:
 - `services/ingest-worker/src/ingest_worker/beat_detect.py`
   - ASCII-safe temp copy for non-ASCII input filenames.
   - Added `-map 0:a:0` to ignore attached cover-art video streams.
-  - Added disk cache at `E:\ai-video-editor-storage\beat\<hash>\beatgrid.json`.
+  - Added disk cache at `C:\Users\Shubh\Documents\ai-video-editor-storage\beat\<hash>\beatgrid.json`.
 - `scripts/golden-render-suite.py`
   - Falls back to structured `featureRuntimeReport` in `cutlist.json` when the text log summary is missing or incomplete.
   - Reads `real_path_ratio` directly from `cutlist.json`.

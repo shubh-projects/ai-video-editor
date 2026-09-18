@@ -16,7 +16,7 @@ EDIT_INTENT_LABELS = {"color_shift", "texture_replace", "structural_change"}
 
 def _client() -> LLMClient:
     return LLMClient(
-        local_model="gemma4:12b",
+        local_model="llama3.1",
         cloud_model="claude-3-5-haiku-20241022",
     )
 

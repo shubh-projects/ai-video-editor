@@ -11,7 +11,7 @@ Notes:
   - First run does full ingest: heatmaps for 60 clips + song analysis (Whisper +
     Demucs + CLAP + Wav2Vec2 + music events + Gemma narrative + DINO + SigLIP +
     clip emotion). Expect 40-90 min end to end depending on cache warm state.
-  - Cache dirs at E:\ai-video-editor-storage\\ are keyed by song_hash + clip_id,
+  - Cache dirs at C:\Users\Shubh\Documents\ai-video-editor-storage\\ are keyed by song_hash + clip_id,
     so this render will NOT clobber the batch 2 caches.
 """
 

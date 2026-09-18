@@ -38,7 +38,7 @@ def _song_hash(audio_path: str) -> str:
 
 
 def _default_cache_dir() -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     return Path(root) / "song_meaning"
 
 
@@ -90,7 +90,20 @@ def aggregate_song_meaning(
 
     mood_profile = analyze_song(song_path, beat_grid, cache_dir=cache_dir)
     stems = separate_song_stems(song_path)
-    stems_dir = Path(stems.get("drums", "")).parent
+    
+    # OOM FALLBACK: If stem separation crashed due to RAM, use the original track
+    stems = stems or {}
+    drums_path = stems.get("drums")
+    vocals_path = stems.get("vocals")
+
+    if not drums_path or not vocals_path:
+        # FIXED: Use song_path instead of local_path
+        drums_path = str(song_path)
+        vocals_path = str(song_path)
+        stems["drums"] = drums_path
+        stems["vocals"] = vocals_path
+
+    stems_dir = Path(drums_path).parent
     words = transcribe_song_lyrics(song_path)
 
     vocals_path = stems.get("vocals")

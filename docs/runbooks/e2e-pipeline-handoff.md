@@ -16,7 +16,7 @@
   - `local-minio-1`
   - `local-temporal-1`
   - `local-temporal-ui-1`
-- **Temporal workers:** running via `pnpm workers` from `services/reason-worker` with the following environment so uploads are read from MinIO instead of the missing local `E:\ai-video-editor-storage` path:
+- **Temporal workers:** running via `pnpm workers` from `services/reason-worker` with the following environment so uploads are read from MinIO instead of the missing local `C:\Users\Shubh\Documents\ai-video-editor-storage` path:
   ```text
   STORAGE_BACKEND=r2
   R2_ENDPOINT_URL=http://localhost:9000
@@ -24,7 +24,7 @@
   R2_SECRET_ACCESS_KEY=minioadmin
   R2_BUCKET_NAME=ai-video-editor
   ```
-- **Local LLM:** Ollama `gemma4:12b` is expected at `http://localhost:11434` for the AI prompt-edit path.
+- **Local LLM:** Ollama `llama3.1` is expected at `http://localhost:11434` for the AI prompt-edit path.
 - **Guardrails service:** currently unreachable. The API fails open, so uploads/tests are not blocked, but this must be wired before any production release.
 
 ---

@@ -15,6 +15,8 @@ from render_worker.activities import (
     download_render_assets,
     fetch_project,
     upload_render,
+    record_render_outcome_activity,
+    ingest_render_to_corpus,
 )
 from render_worker.workflows import VideoRenderWorkflow
 
@@ -30,6 +32,8 @@ async def main() -> None:
             compile_render,
             upload_render,
             complete_render,
+            record_render_outcome_activity,
+            ingest_render_to_corpus,
             cleanup_render_assets,
         ],
         validate=validate_startup,

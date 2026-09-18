@@ -3,7 +3,7 @@
 r"""Demucs stem separation for songs.
 
 Produces four stems (drums, bass, vocals, other) and caches them under
-``E:\ai-video-editor-storage\stems\<song_hash>\``.
+``C:\Users\Shubh\Documents\ai-video-editor-storage\stems\<song_hash>\``.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ def _song_hash(audio_path: str) -> str:
 
 
 def _default_cache_dir() -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     return Path(root) / "stems"
 
 

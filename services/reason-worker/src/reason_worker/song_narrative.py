@@ -395,7 +395,7 @@ async def analyze_song_narrative(
     lyric_words: List[LyricWord],
     vocal_curve: VocalEmotionCurve,
     llm_client: LLMClient,
-    cache_dir: Path = Path(r"E:\ai-video-editor-storage\song_meaning"),
+    cache_dir: Path = Path(r"C:\Users\Shubh\Documents\ai-video-editor-storage\song_meaning"),
 ) -> SongNarrative:
     """Label each song section with narrative semantics.
 
@@ -463,7 +463,7 @@ import httpx
 def _ollama_generate_sync(
     prompt: str,
     base_url: str = "http://localhost:11434",
-    model: str = "gemma4:12b",
+    model: str = "llama3.1",
     max_tokens: int = 256,
     temperature: float = 0.0,
 ) -> str:
@@ -494,7 +494,7 @@ def _label_section_sync(
     global_genres: List[Tuple[str, float]],
     section_index: int,
     base_url: str = "http://localhost:11434",
-    model: str = "gemma4:12b",
+    model: str = "llama3.1",
 ) -> Tuple[Optional[SongSectionSemantics], Optional[dict]]:
     """Synchronous label of one section with one retry on JSON failure."""
     lyrics_text = _lyrics_in_section(lyric_words, section.start_s, section.end_s)
@@ -573,9 +573,9 @@ def analyze_song_narrative_sync(
     mood_profile: SongMoodProfile,
     lyric_words: List[LyricWord],
     vocal_curve: VocalEmotionCurve,
-    cache_dir: Path = Path(r"E:\ai-video-editor-storage\song_meaning"),
+    cache_dir: Path = Path(r"C:\Users\Shubh\Documents\ai-video-editor-storage\song_meaning"),
     base_url: str = "http://localhost:11434",
-    model: str = "gemma4:12b",
+    model: str = "llama3.1",
 ) -> SongNarrative:
     """Synchronous variant of ``analyze_song_narrative`` for sync callers."""
     cache_dir = Path(cache_dir)

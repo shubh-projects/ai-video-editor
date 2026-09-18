@@ -229,7 +229,7 @@ def _compose_kt3_with_llm(
     Returns ``None`` if the LLM fails or returns invalid JSON after one retry.
     """
     prompt = _build_kt3_prompt(slot, source_ip_hint, previous_texts, section_mood=section_mood, narrative_role=narrative_role)
-    client = LLMClient(local_model="gemma4:12b")
+    client = LLMClient(local_model="llama3.1")
 
     for attempt in range(2):
         try:

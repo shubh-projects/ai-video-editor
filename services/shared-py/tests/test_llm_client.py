@@ -27,8 +27,8 @@ def _fake_ollama_response(text: str):
 
 def test_cache_path_is_stable():
     client = LLMClient(cache_root=Path("/tmp/cache"))
-    p1 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "gemma4:12b")
-    p2 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "gemma4:12b")
+    p1 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "llama3.1")
+    p2 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "llama3.1")
     assert p1 == p2
     assert p1.parent.name == "iconic_quote_score"
     assert p1.suffix == ".json"
@@ -36,8 +36,8 @@ def test_cache_path_is_stable():
 
 def test_cache_path_differs_by_task():
     client = LLMClient(cache_root=Path("/tmp/cache"))
-    p1 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "gemma4:12b")
-    p2 = client._cache_path(LLMTask.EDIT_INTENT_CLASSIFY, PROMPT, "gemma4:12b")
+    p1 = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "llama3.1")
+    p2 = client._cache_path(LLMTask.EDIT_INTENT_CLASSIFY, PROMPT, "llama3.1")
     assert p1 != p2
 
 
@@ -53,7 +53,7 @@ def test_complete_returns_ollama_response(tmp_path):
     assert result == "0.85"
     mock_post.assert_called_once()
     call_kwargs = mock_post.call_args.kwargs
-    assert call_kwargs["json"]["model"] == "gemma4:12b"
+    assert call_kwargs["json"]["model"] == "llama3.1"
     assert call_kwargs["json"]["options"]["temperature"] == 0.0
 
 
@@ -76,7 +76,7 @@ def test_complete_caches_ollama_response(tmp_path):
     assert r2 == "0.91"
     assert mock_post.call_count == 1
 
-    cache_path = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "gemma4:12b")
+    cache_path = client._cache_path(LLMTask.ICONIC_QUOTE_SCORE, PROMPT, "llama3.1")
     assert cache_path.exists()
 
 

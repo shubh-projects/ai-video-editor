@@ -17,7 +17,7 @@ import httpx
 logger = logging.getLogger(__name__)
 
 SAM3_URL = os.environ.get("SAM3_SERVER_URL", "http://localhost:8189")
-SAM3_MASK_CACHE_DIR = Path(os.environ.get("SAM3_MASK_CACHE_DIR", r"E:\ai-video-editor-storage\sam3_masks"))
+SAM3_MASK_CACHE_DIR = Path(os.environ.get("SAM3_MASK_CACHE_DIR", r"C:\Users\Shubh\Documents\ai-video-editor-storage\sam3_masks"))
 DEFAULT_SAM_VERSION = "sam3.1"
 
 

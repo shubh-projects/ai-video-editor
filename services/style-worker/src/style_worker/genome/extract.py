@@ -183,7 +183,7 @@ def _normalize_style_analysis(
         try:
             style_analysis.camera_motions = analyze_camera_motion(video_path, shots)
         except Exception as exc:
-            logger.warning("Failed to analyze camera motion for genome: %s", exc)
+            logger.warning(f"Failed to analyze camera motion for genome: {exc}")
             style_analysis.camera_motions = ["static"] * len(shots)
 
     if not style_analysis.camera_motions:

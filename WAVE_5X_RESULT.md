@@ -8,7 +8,7 @@
 
 ### Song Narrative (Wave 5X.1)
 - New `services/reason-worker/src/reason_worker/song_narrative.py`:
-  - `label_song_section(...)` prompts a local Gemma (`gemma4:12b`) model to tag each song section with `lyric_sentiment`, `story_role`, `emotional_intensity`, `arc_beat_hint`, and a short `rationale`.
+  - `label_song_section(...)` prompts a local Gemma (`llama3.1`) model to tag each song section with `lyric_sentiment`, `story_role`, `emotional_intensity`, `arc_beat_hint`, and a short `rationale`.
   - `analyze_song_narrative(...)` walks the `SongMoodProfile` sections and returns a `SongNarrative` object.
   - JSON parse failures are handled with a retry + skip strategy so one malformed label does not break the whole song.
 - Integrated into `aggregate_song_meaning` in `services/ingest-worker/src/ingest_worker/song_meaning.py`.

@@ -143,7 +143,7 @@ export async function buildApp() {
   // assets accessible to the web frontend without needing presigned R2 URLs.
   app.get("/storage/*", async (request, reply) => {
     const key = (request.params as Record<string, string>)["*"];
-    const storageRoot = process.env.STORAGE_ROOT || "E:\ai-video-editor-storage";
+    const storageRoot = process.env.STORAGE_ROOT || "C:\Users\Shubh\Documents\ai-video-editor-storage";
     const resolvedRoot = path.resolve(storageRoot);
     const filePath = path.resolve(path.join(resolvedRoot, key));
 

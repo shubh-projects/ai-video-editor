@@ -50,7 +50,7 @@ Ran `detect_music_events()` on the cached Demucs stems for the Wave 2 song and p
 - 399 vocal onsets
 - 146 sweep peaks
 
-The output was cached to `E:\ai-video-editor-storage\song_meaning\<stem_hash>\music_events.json`.
+The output was cached to `C:\Users\Shubh\Documents\ai-video-editor-storage\song_meaning\<stem_hash>\music_events.json`.
 
 ### Full pytest
 ```text

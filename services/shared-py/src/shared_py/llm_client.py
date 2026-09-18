@@ -46,10 +46,10 @@ class LLMTask(str, Enum):
 def _default_local_model(task: LLMTask) -> str:  # noqa: ARG001
     """Return the local Ollama model for a task.
 
-    Both small and large-context tasks currently use ``gemma4:12b`` because the
+    Both small and large-context tasks currently use ``llama3.1`` because the
     deployment only has one local model available.
     """
-    return "gemma4:12b"
+    return "llama3.1"
 
 
 def _default_cloud_model(task: LLMTask) -> str:  # noqa: ARG001
@@ -73,7 +73,7 @@ class LLMClient:
     """
 
     DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
-    DEFAULT_CACHE_ROOT = Path("E:/ai-video-editor-storage/llm_cache")
+    DEFAULT_CACHE_ROOT = Path(os.path.expanduser("~")) / "ai-video-editor-storage" / "llm_cache"
 
     def __init__(
         self,

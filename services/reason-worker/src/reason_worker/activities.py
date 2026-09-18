@@ -27,6 +27,35 @@ from reason_worker.transition_stage import apply_semantic_transition_stage
 logger = StructuredLogger("reason_worker.activities")
 
 
+def clean_cutlist_payload(data):
+    # Convert to dict if it's a Pydantic model
+    if hasattr(data, "model_dump"):
+        data = data.model_dump()
+    elif hasattr(data, "dict"):
+        data = data.dict()
+        
+    if not isinstance(data, dict):
+        return data
+
+    # 1. Strip extra top-level keys
+    for key in ['demoGrade', 'featureRuntimeReport', 'narrativeMode', 'realPathRatio', 'slotWindowFallbackCount']:
+        data.pop(key, None)
+        
+    # 2. Strip internal slot keys and fix null text
+    for slot in data.get("slots", []):
+        for key in ['arcBeatEmotionTarget', 'arcBeatPreferredShots', 'emotionMatchScore', 'emphasisWords', 'heatmapScore', 'intent', 'isGlimpse', 'layers', 'storyBeat']:
+            slot.pop(key, None)
+        for key in ['kineticText', 'kineticTextStyle', 'kineticTextColor', 'kineticTextAnimation']:
+            if slot.get(key) is None:
+                slot[key] = ""
+                
+    # 3. Strip internal audio track keys
+    for track in data.get("audioTracks", []):
+        for key in ['duckDisabled', 'jCutLeadInS', 'lCutTailS', 'loudness', 'slotIndex', 'sourceEndS', 'sourceStartS']:
+            track.pop(key, None)
+            
+    return data
+
 def _internal_headers() -> Dict[str, str]:
     token = os.environ.get("INTERNAL_WORKER_TOKEN")
     if not token:
@@ -495,16 +524,85 @@ async def rank_clips_activity(
     return result
 
 
+import copy
+import json
+import uuid
+
+def clean_cutlist_payload(data):
+    # 1. Force convert to native dict
+    if hasattr(data, "model_dump"):
+        data = data.model_dump()
+    elif hasattr(data, "dict"):
+        data = data.dict()
+        
+    # Sever any Pydantic ties that might prevent dictionary updates
+    data = json.loads(json.dumps(data))
+        
+    if not isinstance(data, dict):
+        return data
+
+    # 2. Strip AI debug keys that cause "unrecognized key" errors
+    for key in ['demoGrade', 'featureRuntimeReport', 'narrativeMode', 'realPathRatio', 'slotWindowFallbackCount']:
+        data.pop(key, None)
+        
+    for slot in data.get("slots", []):
+        for key in ['arcBeatEmotionTarget', 'arcBeatPreferredShots', 'emotionMatchScore', 'emphasisWords', 'heatmapScore', 'intent', 'isGlimpse', 'layers', 'storyBeat']:
+            slot.pop(key, None)
+            
+    for track in data.get("audioTracks", []):
+        for key in ['duckDisabled', 'jCutLeadInS', 'lCutTailS', 'loudness', 'slotIndex', 'sourceEndS', 'sourceStartS']:
+            track.pop(key, None)
+            
+    # ---> THE FIX: Strip both loudness and effects from globals
+    if "globals" in data and isinstance(data["globals"], dict):
+        data["globals"].pop("loudness", None)
+        data["globals"].pop("effects", None)
+        
+    # 3. The Nuclear Option: Destroy ALL remaining `null` values recursively
+    def obliterate_nulls(obj):
+        if isinstance(obj, dict):
+            for k, v in list(obj.items()):
+                if v is None:
+                    # If the key expects a timestamp/number, give it 0.0
+                    if k.endswith('S') or k in ['duration', 'start', 'end', 'sourceWindowStartS', 'sourceWindowEndS']:
+                        obj[k] = 0.0
+                    else:
+                        obj[k] = ""  # Otherwise give it an empty string
+                else:
+                    obj[k] = obliterate_nulls(v)
+        elif isinstance(obj, list):
+            for i in range(len(obj)):
+                if obj[i] is None:
+                    obj[i] = ""
+                else:
+                    obj[i] = obliterate_nulls(obj[i])
+        return obj
+
+    data = obliterate_nulls(data)
+
+    # 4. Generate strictly valid UUIDs for any effects missing them
+    for slot in data.get("slots", []):
+        for effect in slot.get("effects", []):
+            val = effect.get("id", "")
+            if not isinstance(val, str) or len(val) != 36:
+                effect["id"] = str(uuid.uuid4())
+
+    return data
+
+
 @activity.defn
 async def save_generated_cutlist(
     project_id: str, generation_job_id: str, cutlist: dict, completion_token: str
 ) -> dict:
     """Persist the generated cut-list and mark the generation job complete."""
+    # Clean the cutlist before sending to the API
+    cleaned_cutlist = clean_cutlist_payload(cutlist)
+
     async with httpx.AsyncClient() as client:
         resp = await client.patch(
             f"{settings.api_base}/internal/projects/{project_id}/generated-cutlist",
             json={
-                "cutList": cutlist,
+                "cutList": cleaned_cutlist,
                 "generationJobId": generation_job_id,
                 "completionToken": completion_token,
             },

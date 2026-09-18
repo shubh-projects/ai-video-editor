@@ -20,7 +20,7 @@ _DISK_TABLES: Dict[Path, Dict[str, Tuple[float, float]]] = {}
 
 
 def _flow_cache_dir() -> Path:
-    root = os.environ.get("STORAGE_ROOT", r"E:\ai-video-editor-storage")
+    root = os.environ.get("STORAGE_ROOT", r"C:\Users\Shubh\Documents\ai-video-editor-storage")
     return Path(root) / "flow_vectors"
 
 
