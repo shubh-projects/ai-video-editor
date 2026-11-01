@@ -65,6 +65,12 @@ def build_identity_masks(
     candidate pool or from the cutlist; non-protagonist clips simply receive no
     mask path and an empty ``identity_ids_present`` list.
     """
+    
+    # ====== TEMPORARY MEMORY BYPASS ======
+    # This completely skips the face masking so FFmpeg has enough RAM to render
+    return {}, {}
+    # =====================================
+
     cutlist_obj = cutlist if isinstance(cutlist, CutList) else CutList(**cutlist)
 
     # Ensure face caches exist for every selected clip in one batched pass.

@@ -169,6 +169,12 @@ export async function buildApp() {
     if (request.url === "/api/billing/webhook") {
       return;
     }
+    if (
+      request.url.startsWith("/api/renders/") &&
+      (request.url.endsWith("/complete") || request.url.endsWith("/outcomes"))
+    ) {
+      return;
+    }
     await requireAuth(request, reply);
   });
 

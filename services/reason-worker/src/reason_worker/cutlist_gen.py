@@ -964,8 +964,11 @@ def generate_cutlist_programmatic(
 
     # Cap slot count to prevent over-cutting when the user has few clips.
     # Users can add as many clips as they want; the cap only limits slots per clip.
+    # Dynamic anti-looping cap: Allows ~10 distinct cuts per uploaded clip.
+    # This prevents repetition fatigue but gives the AI enough headroom 
+    # to build full-length, fast-paced timelines from long footage.
     if user_clip_count:
-        max_slots = max(3, user_clip_count * 3)
+        max_slots = max(10, user_clip_count * 10)
         if len(slots) > max_slots:
             slots = slots[:max_slots]
 

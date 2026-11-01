@@ -1068,7 +1068,7 @@ def _apply_video_effects(
         elif etype == "film_grain":
             intensity = _get_param(params, "intensity", 0.2)
             filters.append(
-                f"noise=c0s={intensity * 10}:allf=t+u:enable='{_enable_expr(rel_start, rel_end)}'"
+                f"noise=c0s={int(intensity * 10)}:allf=t+u:enable='{_enable_expr(rel_start, rel_end)}'"
             )
 
         elif etype == "shake":
@@ -1103,7 +1103,7 @@ def _apply_video_effects(
                 f"enable='{_enable_expr(rel_start, rel_end)}'"
             )
             filters.append(
-                f"noise=c0s={intensity * 8}:allf=t+u:"
+                f"noise=c0s={int(intensity * 8)}:allf=t+u:"
                 f"enable='{_enable_expr(rel_start, rel_end)}'"
             )
 

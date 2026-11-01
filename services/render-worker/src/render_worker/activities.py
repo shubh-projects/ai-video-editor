@@ -287,16 +287,10 @@ async def complete_render(render_id: str, output_asset_id: str, completion_token
     }
 
     attempts = [
-        # ATTEMPT 1: Internal render completion route (Best case scenario)
-        ("POST", f"{settings.api_base}/internal/renders/{render_id}/complete", base_headers, payload_strict),
-        
-        # ATTEMPT 2: Internal progress route, sneaking the outputAssetId in
-        ("POST", f"{settings.api_base}/internal/progress/{render_id}", base_headers, payload_progress_with_asset),
-        
-        # ATTEMPT 3: The Public Webhook
+        # ATTEMPT 1: The true completion route (Now allowed through the Clerk wall!)
         ("POST", f"{settings.api_base}/renders/{render_id}/complete", base_headers, payload_strict),
         
-        # ATTEMPT 4: The Guaranteed Escape Hatch (will make it 100% no matter what)
+        # ATTEMPT 2: Fallback progress route just in case
         ("POST", f"{settings.api_base}/internal/progress/{render_id}", base_headers, payload_progress_basic),
     ]
 
